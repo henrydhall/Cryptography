@@ -15,8 +15,20 @@ def euclidean(a,b):
     return r[-2]
 
 # Problem 1.10 - The Extended Euclidean Algorithm
-#https://www.geeksforgeeks.org/python-program-for-basic-and-extended-euclidean-algorithms-2/
-
+def extended_euclidean(a,b):
+    if a == 0:
+        return b, 0, 1
+ 
+    gcd, x1, y1 = extended_euclidean(b % a, a)
+ 
+    x = y1 - (b//a) * x1
+    y = x1
+ 
+    return gcd, x, y
+ 
 if __name__ == '__main__':
     print( euclidean(139024789,93278890) )
     print( euclidean( 16534528044, 8332745927) )
+    print( extended_euclidean(291, 252) )
+    print( extended_euclidean(16261, 85652) )
+    print( extended_euclidean(4,7))
