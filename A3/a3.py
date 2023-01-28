@@ -3,6 +3,7 @@ a3.py
 Assignment 3 - Henry Hall
 """
 
+# 1.30
 def extended_euclidean(a,b):
     if a == 0:
         return b, 0, 1
@@ -34,6 +35,8 @@ def ee_multiplicative_inverse(p,a):
 def fp_multiplicative_inverse(p,a):
     return fast_power(p, a, p-2) 
 
+# 1.32
+
 def euler_totient(a):
     total = 0
     for i in range(a):
@@ -64,6 +67,14 @@ def primitive_roots(a):
     else:
         return 'failed'
 
+# 1.34 
+
+def group_finder(a):
+    print()
+    print(f'Group of {a}')
+    for i in range(a):
+        print( f'{i}: ', (i**2)%a )
+
 if __name__ == '__main__':
     print(ee_multiplicative_inverse(47, 11))
     print(fp_multiplicative_inverse(47, 11))
@@ -75,3 +86,5 @@ if __name__ == '__main__':
     print('\n1.32')
     print('phi(228) = ',euler_totient(228))
     print('Primitive roots of 229: ' , primitive_roots(229)[0])
+
+    group_finder(11)
