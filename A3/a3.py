@@ -41,24 +41,28 @@ def euler_totient(a):
             total = total + 1
     return total
 
-def primitive_root(a,n,psi):
+def unit_group(a):
     roots = set()
-    for i in range(n):
-        roots.add( (a**i)%n )
-    print(roots)
-    #TODO: need to add a thing to get all elements of F_n            
+    for i in range(a):
+        if extended_euclidean(i, a)[0] == 1:
+            roots.add(i)
+    return roots 
 
 def primitive_roots(a):
     psi_a = euler_totient(a-1)
-    for i in range( a ):
-        roots = set()
+    unit_group_a = unit_group(a)
+    generators = []
+    for i in range(a):
+        generated = set()
         for j in range(a):
-            roots.add( (i**j) % a)
-        if len(roots) == psi_a:
-            return roots, len(roots), i
-        print(len(roots))
-    return 'Failed' # Totally different
- 
+            g = (i**j)%a
+            generated.add(g)
+        if generated == unit_group_a:
+            generators.append(i)
+    if psi_a == len(generators):
+        return generators, psi_a
+    else:
+        return 'failed'
 
 if __name__ == '__main__':
     print(ee_multiplicative_inverse(47, 11))
@@ -67,11 +71,7 @@ if __name__ == '__main__':
     print(ee_multiplicative_inverse(587, 345))
     print(fp_multiplicative_inverse(587, 345))
 
-    """
+    
     print('\n1.32')
-    print('phi(229) = ',euler_totient(228))
-    print('Roots: ' , primitive_roots(229))
-    """
-    print('\nTest')
-    print('psi(11) = ', euler_totient(10))
-    primitive_root(2,11)
+    print('phi(228) = ',euler_totient(228))
+    print('Primitive roots of 229: ' , primitive_roots(229)[0])
