@@ -1,42 +1,6 @@
-"""
- Assignemnt 5
- Henry Hall
-"""
+#TODO: shanks and prime number generator
 
 import math
-
-def fast_power(N, g, A):
-    #solves (g^a) mod n
-    a = g
-    b = 1
-    while A > 0:
-        if A%2 == 1:
-            b = (b*a) % N
-        a = (a**2) % N
-        A = A//2
-    return b
-
-def brute_force_discrete_log_fast_power(g,h,p):
-    # Finds x for g^x = h (mod p)
-    for i in range(0,p):
-        if fast_power(p, g, i) - h == 0:
-            return i
-    return 'fail'
-
-def diffie_hellman(p, g):
-    # p shared prime
-    # g shared base
-    a = 1      # Alice's, unknown a
-    b = 871    # Bob's picked b
-    A = 974    # Alice's sent A
-    B = 1      # Bob's 
-
-    B = fast_power(p, g, b)
-    shared = fast_power(p, g, A)
-
-    a = brute_force_discrete_log_fast_power(g, 974, p)
-
-    return B, shared, a
 
 def extended_euclidean(a,b):
     if a == 0:
@@ -55,73 +19,65 @@ def ee_multiplicative_inverse(p,a):
         mi = mi + p
     return mi
 
-def Elgamal(P, g, a, b, m, k):
-    """
-    Elgamal(P, g, a, b, m, k)
-    Input: 
-        P: public prime key
-        g: public base
-        a: receiver secret key
-        b: sender secret key
-        m: sender message
-        k: ephemeral key
-    """
+def fast_power(N, g, A):
+    #solves (g^a) mod n
+    a = g
+    b = 1
+    while A > 0:
+        if A%2 == 1:
+            b = (b*a) % N
+        a = (a**2) % N
+        A = A//2
+    return b
 
-    #P     # Public prime
-    #g     # Public root of large prime order
+def order(p,n):
+    product = (n) % p
+    for i in range(1,p):
+        if product == 1: 
+            return i
+        else:
+            product = (product * n) % p
+    raise ValueError('Could not calculate order')
 
-    # Key creation
-    #a    # Selected private key
-    A = fast_power(P, g, a) # Public key
-    print(f'A: {A}')
+def shanks(p, g, h):
+    x = order(p, g)
+    n = int(1 + math.sqrt(x))//1
+    u = ee_multiplicative_inverse(p, fast_power(p, g, n) )
+    list1 = [ (g**i)%p for i in range(1,n+1) ]
+    list2 = [ h*( u**i )%p for i in range(1,n+1) ]
+    duplicate = 0
+    for item in list1:
+        if item in list2:
+            duplicate = item
+    index1 = list1.index(duplicate) + 1
+    index2 = list2.index(duplicate) + 1
+    return index1 + (n*index2)
 
-    # Encryption
-    #m # Plaintext
-    #k # Ephemeral key
-    c1 = fast_power(P, g, k)
-    c2 = (m * fast_power(P, A, k) ) % P
-    print('Message: ', (c1,c2))
-
-    # Decryption
-    x = fast_power(P, c1, a)
-    x_1 = ee_multiplicative_inverse(P,x)
-    m_d = (x_1 * c2)%P
-    print(m_d)
-
-def Elgamal_decrypt(P, g, a, message):
-    """
-    Elgamal(P, g, a, b, m, k)
-    Input: 
-        P: public prime key
-        g: public base
-        a: receiver secret key
-        message: sender message
-    """
-    c1 = message[0]
-    c2 = message[1]
-
-    x = fast_power(P, c1, a)
-    x_1 = ee_multiplicative_inverse(P,x)
-    m_d = (x_1 * c2)%P
-    print(m_d)
-
-def Elgamal_eavesdrop(P, g, B, message):
-    a = brute_force_discrete_log_fast_power(g,B,P)
-    print(a)
-
-    c1 = message[0]
-    c2 = message[1]
-
-
-    x = fast_power(P, c1, a)
-    x_1 = ee_multiplicative_inverse(P,x)
-    m_d = (x_1 * c2)%P
-    print(m_d)
+def n_primes(n):
+    threes = 9
+    primes = [2]
+    num_primes = 1
+    isPrime = True
+    i = 3
+    while num_primes != n:
+        if i == threes:
+            threes += 6
+            i += 2
+        checkLimit = int( math.sqrt(i)+1 )
+        for j in primes:
+            if j > checkLimit:
+                break
+            if i % j == 0:
+                isPrime = False
+                break
+        if isPrime:
+            num_primes = num_primes + 1
+            primes.append(i)
+        isPrime = True
+        i += 2
+    return primes
 
 if __name__ == '__main__':
-    print(diffie_hellman(1373, 2))
-    #print(Elgamal(1373, 2, 716, 947, 583, 877))
-    #Elgamal(1373, 2, 716, 947, 583, 877)
-    #Elgamal(1373, 2, 299, b, m, k)
-    #Elgamal_decrypt(1373, 2, 299, (661,1325))
-    Elgamal_eavesdrop(1373, 2, 893, (693,793))
+    print( shanks(17389, 9704, 13896) )
+    print(n_primes(10000)[-1])
+    print('The millionth prime is 15485863, but it took a minute to get to there...')
