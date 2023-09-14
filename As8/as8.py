@@ -52,13 +52,55 @@ class EllipticCurveField:
 
         return finite_field
     
+    def add_points(self, pos1, pos2):
+        finite_field = self.get_finite_field()
+        value1, value2 = finite_field[pos1], finite_field[pos2]
+
+        # A, B
+        if value1 == 'O':
+            return value2
+        elif value2 == 'O':
+            return value1
+        
+        # C
+        x1, y1 = value1[0], value1[1]
+        x2, y2 = value2[0], value2[1]
+
+        # D
+        if x1 == x2 and y1 != y2:
+            return 'O'
+        
+        # E
+        if value1 != value2:
+            bottom = x2-x1 
+            if bottom < 0:
+                bottom = bottom + self.P
+            bottom = ee_multiplicative_inverse(self.P, bottom)
+            lam = bottom * (y2 - y1)
+        else:
+            bottom = 2*y1
+            bottom = ee_multiplicative_inverse(self.P, bottom)
+            lam = (3* (x1**2) + self.Curve.A ) * bottom
+ 
+        v = y1 - (lam * x1)
+
+        x3 = (lam**2 - x1 - x2) % self.P
+        y3 = (-(lam*x3 + v)) % self.P
+
+        # Checking for finite field trick
+        if (x3,y3) not in finite_field:
+            return 'O'
+
+        return (x3, y3)
+    
     def get_addition_table(self):
         finite_field = self.get_finite_field()
         print('         ' + str(finite_field))
-        for row in finite_field:
-            print(str(row).rjust(6))
-        # TODO: addition algorithm...
-        # TODO
+        for i in range(0,len(finite_field)):
+            group = []
+            for j in range(0,len(finite_field)):
+                group.append( self.add_points(i,j) )
+            print(str(finite_field[i]).rjust(6) ,group)
 
 curve_fields_to_generate = [(3,2,7),(2,7,11),(4,5,11)]
 
@@ -71,4 +113,15 @@ def prob_5_6():
     curve_field = EllipticCurveField(2,3,7)
     curve_field.get_addition_table()
 
-prob_5_6()
+def tester():
+    cf = EllipticCurveField(3, 8, 13)
+    cf.get_addition_table()
+
+def prob_5_7():
+    cfb = EllipticCurveField(1,1,5)
+    print(cfb.get_finite_field())
+
+    cfc = EllipticCurveField(1,1,7)
+    print(cfc.get_finite_field())
+
+prob_5_7()
