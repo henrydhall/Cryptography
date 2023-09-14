@@ -53,8 +53,15 @@ class EllipticCurveField:
         return finite_field
     
     def add_points(self, pos1, pos2):
+
         finite_field = self.get_finite_field()
-        value1, value2 = finite_field[pos1], finite_field[pos2]
+
+        if type(pos1) is int:
+            value1, value2 = finite_field[pos1], finite_field[pos2]
+        else:
+            position1 = finite_field.index(pos1)
+            position2 = finite_field.index(pos2)
+            value1, value2 = finite_field[position1], finite_field[position2]
 
         # A, B
         if value1 == 'O':
@@ -102,15 +109,20 @@ class EllipticCurveField:
                 group.append( self.add_points(i,j) )
             print(str(finite_field[i]).rjust(6) ,group)
 
-    def brute_force(self, P, Q, max = 15):
+    def brute_force(self, P, Q, max = 150):
         i = 1
+        pi = P
         while i < max:
             # TODO: brute forcing a ecdlp
+            pi = self.add_points(pi,Q)
+            if pi == Q:
+                return i
             i += 1
 
 def prob_5_8():
     cf = EllipticCurveField(1,1,5)
     print(cf.get_finite_field())
+    print(cf.brute_force((4,2),(0,1)))
 
 if __name__ == '__main__':
     prob_5_8()
