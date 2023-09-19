@@ -113,16 +113,51 @@ class EllipticCurveField:
         i = 1
         pi = P
         while i < max:
-            # TODO: brute forcing a ecdlp
             pi = self.add_points(pi,Q)
             if pi == Q:
                 return i
             i += 1
+
+    def double_and_add(self, p, n):
+        Q = p
+        R = 'O'
+        while n > 0:
+            if (n-1)%2 == 0:
+                R = self.add_points(R,Q)
+
+            Q = self.add_points(Q,Q)
+            n = (n // 2)
+
+        return R
 
 def prob_5_8():
     cf = EllipticCurveField(1,1,5)
     print(cf.get_finite_field())
     print(cf.brute_force((4,2),(0,1)))
 
+def prob_5_10():
+    '''
+    # Test Curve
+    cftest = EllipticCurveField(14,19,3623)
+    print(cftest.double_and_add((6,730),947))
+    '''
+    cfa = EllipticCurveField(23,13,83)
+    print(cfa.double_and_add((24,14),19))
+
+    cfb = EllipticCurveField(143,367,613)
+    print(cfb.double_and_add((195,9),23))
+
+    cfc = EllipticCurveField(1828,1675,1999)
+    print(cfc.double_and_add((1756,348),11))
+
+    cfd = EllipticCurveField(1541,1335,3221)
+    print(cfd.double_and_add((2898,439),3211))
+
+def ternary_expansion(n):
+    return n
+
+def prob_5_11():
+    pass
+
 if __name__ == '__main__':
-    prob_5_8()
+    prob_5_10()
