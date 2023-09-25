@@ -167,5 +167,14 @@ def prob_5_13():
     print( ecf.double_and_add((1980,431),875) ) # TODO: get shared value
     print(ecf.shared_value_from_x(2,875))
 
+def MV_Elgamal():
+    '''
+    Menezes-Vanstone Elgamal Cryptosystem
+    '''
+    pass
+
+def prob_5_16():
+    pass
+
 if __name__ == '__main__':
     prob_5_13()
