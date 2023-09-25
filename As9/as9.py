@@ -34,6 +34,7 @@ class EllipticCurveField:
     def __init__(self, A_, B_, P_):
         self.Curve = EllipticCurve(A_, B_)
         self.P = P_
+        self.finite_field = None
 
     def get_field_square(self):
         field = dict()
@@ -42,6 +43,10 @@ class EllipticCurveField:
         return field
     
     def get_finite_field(self):
+
+        if self.finite_field is not None:
+            return self.finite_field
+
         group_square = self.get_field_square()
         finite_field = ['O']
         for i in range(0,self.P):
@@ -49,7 +54,7 @@ class EllipticCurveField:
                 for key in group_square.keys():
                     if group_square[key] == self.Curve.y_squared(i) % self.P:
                         finite_field.append((i,key))
-
+        self.finite_field = finite_field
         return finite_field
     
     def add_points(self, pos1, pos2):
@@ -59,9 +64,7 @@ class EllipticCurveField:
         if type(pos1) is int:
             value1, value2 = finite_field[pos1], finite_field[pos2]
         else:
-            position1 = finite_field.index(pos1)
-            position2 = finite_field.index(pos2)
-            value1, value2 = finite_field[position1], finite_field[position2]
+            value1, value2 = pos1, pos2
 
         # A, B
         if value1 == 'O':
