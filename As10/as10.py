@@ -22,6 +22,19 @@ def ee_multiplicative_inverse(p,a):
         mi = mi + p
     return mi
 
+def fast_power(N, g, A):
+    '''
+    solves (g^a) mod n
+    '''
+    a = g
+    b = 1
+    while A > 0:
+        if A%2 == 1:
+            b = (b*a) % N
+        a = (a**2) % N
+        A = A//2
+    return b
+
 class EllipticCurve:
     def __init__(self, A_, B_):
         self.A = A_
@@ -134,6 +147,11 @@ class EllipticCurveField:
 
         return R
     
+    def shared_value_from_x(self, alice_x, my_x):
+        y_b_2 = self.Curve.y_squared(alice_x)
+        y_b = fast_power(self.P, y_b_2, (self.P + 1) / 4 )
+        return self.double_and_add((alice_x,y_b),my_x)[0]
+
 def prob_5_13():
 
     ecf = EllipticCurveField(171,853,2671)
@@ -147,6 +165,7 @@ def prob_5_13():
     # d 
     print( ecf.Curve.y_squared(2) )
     print( ecf.double_and_add((1980,431),875) ) # TODO: get shared value
+    print(ecf.shared_value_from_x(2,875))
 
 if __name__ == '__main__':
     prob_5_13()
