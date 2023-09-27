@@ -167,14 +167,20 @@ def prob_5_13():
     print( ecf.double_and_add((1980,431),875) ) # TODO: get shared value
     print(ecf.shared_value_from_x(2,875))
 
-def MV_Elgamal():
+def MV_Elgamal(P, A, B, point, nA, message):
     '''
     Menezes-Vanstone Elgamal Cryptosystem
     '''
-    pass
+    MVE_Curve = EllipticCurveField( A, B, P )
+    QA = MVE_Curve.double_and_add(point, nA)
+    print(QA)
+    T = MVE_Curve.double_and_add(message[0],nA)
+    m1 = ee_multiplicative_inverse(P,T[0]) * message[1] % P
+    m2 = ee_multiplicative_inverse(P, T[1]) * message[2] % P
+    print(m1, m2)
 
 def prob_5_16():
-    pass
+    MV_Elgamal(1201, 19, 17, (278,285), 595, ((1147,640),279,1189))
 
 if __name__ == '__main__':
-    prob_5_13()
+    prob_5_16()
