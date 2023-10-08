@@ -1,6 +1,6 @@
 '''
 Henry Hall
-5.3
+5.4
 9/14/23
 '''
 
@@ -21,6 +21,19 @@ def ee_multiplicative_inverse(p,a):
     if mi < 0:
         mi = mi + p
     return mi
+
+def fast_power(N, g, A):
+    '''
+    solves (g^a) mod n
+    '''
+    a = g
+    b = 1
+    while A > 0:
+        if A%2 == 1:
+            b = (b*a) % N
+        a = (a**2) % N
+        A = A//2
+    return b
 
 class EllipticCurve:
     def __init__(self, A_, B_):
@@ -116,10 +129,11 @@ class EllipticCurveField:
         i = 1
         pi = P
         while i < max:
-            pi = self.add_points(pi,Q)
             if pi == Q:
+                print(pi,Q)
                 return i
             i += 1
+            pi = self.add_points(pi,P)
 
     def double_and_add(self, p, n):
         Q = p
@@ -132,36 +146,41 @@ class EllipticCurveField:
             n = (n // 2)
 
         return R
+    
+    def shared_value_from_x(self, alice_x, my_x):
+        y_b_2 = self.Curve.y_squared(alice_x)
+        y_b = fast_power(self.P, y_b_2, (self.P + 1) / 4 )
+        return self.double_and_add((alice_x,y_b),my_x)[0]
 
-def prob_5_8():
-    cf = EllipticCurveField(1,1,5)
-    print(cf.get_finite_field())
-    print(cf.brute_force((4,2),(0,1)))
+def prob_5_13():
 
-def prob_5_10():
+    ecf = EllipticCurveField(171,853,2671)
+    # a
+    print(ecf.double_and_add((1980,431),1943))
+    # b
+    print(ecf.double_and_add((2110,543),1943))
+    # c
+    print(ecf.brute_force((1980,431),(2110,543),1000))
+
+    # d 
+    print( ecf.Curve.y_squared(2) )
+    print( ecf.double_and_add((1980,431),875) ) # TODO: get shared value
+    print(ecf.shared_value_from_x(2,875))
+
+def MV_Elgamal(P, A, B, point, nA, message):
     '''
-    # Test Curve
-    cftest = EllipticCurveField(14,19,3623)
-    print(cftest.double_and_add((6,730),947))
+    Menezes-Vanstone Elgamal Cryptosystem
     '''
-    cfa = EllipticCurveField(23,13,83)
-    print(cfa.double_and_add((24,14),19))
+    MVE_Curve = EllipticCurveField( A, B, P )
+    QA = MVE_Curve.double_and_add(point, nA)
+    print(QA)
+    T = MVE_Curve.double_and_add(message[0],nA)
+    m1 = ee_multiplicative_inverse(P,T[0]) * message[1] % P
+    m2 = ee_multiplicative_inverse(P, T[1]) * message[2] % P
+    print(m1, m2)
 
-    cfb = EllipticCurveField(143,367,613)
-    print(cfb.double_and_add((195,9),23))
-
-    cfc = EllipticCurveField(1828,1675,1999)
-    print(cfc.double_and_add((1756,348),11))
-
-    cfd = EllipticCurveField(1541,1335,3221)
-    print(cfd.double_and_add((2898,439),3211))
-
-def ternary_expansion(n):
-    return n
-
-def prob_5_11():
-    pass
+def prob_5_16():
+    MV_Elgamal(1201, 19, 17, (278,285), 595, ((1147,640),279,1189))
 
 if __name__ == '__main__':
-    print(bin(349))
-    print(bin(9337))
+    prob_5_16()
