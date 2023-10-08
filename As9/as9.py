@@ -160,4 +160,5 @@ def prob_5_11():
     pass
 
 if __name__ == '__main__':
-    prob_5_10()
+    print(bin(349))
+    print(bin(9337))
