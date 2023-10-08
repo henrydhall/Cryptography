@@ -159,44 +159,36 @@ class EllipticCurveField:
                 return Q
         return R
         
-    def lenstra_factor(self, n, P, m):
+    def lenstra_factor(self, P, max_mult ):
         # Functions in class to allow for factoring
         '''
         Using Lenstra's to factor p
         '''
         p = P
 
-        for i in range(2,m):
-            p = self.lenstra_double_and_add(p, i)
-            if type(p) is int and p != 0:
-                return p
-            else:
-                return 0
+        for i in range(2,max_mult):
+            P = self.lenstra_double_and_add(P,i)
+            if type(P) is int:
+                return P
     
-def lenstra_factorization(n, m):
+def lenstra_factorization(n, max_curve, max_mult):
     '''
     n int: number to attempt factoring.
     m int: number of curves to attempt with.
     '''
     # Functions out of class to do factoring
     
-    for i in range(1,m):
-        a, b = random.randint(1,n), random.randint(1,n)
-        A = random.randint(1,n)
-        B = (b**2 - a**3 - A*a) % n
-
-        a = 1512
-        b = 3166
-        A = 14
-
+    for i in range(0, max_curve):
+        P = (random.randint(1,n),random.randint(1,n))
+        a = P[0]
+        b = P[1]
+        A = random.randint(0,n)
         B = ((b**2) - (a**3) - (A*a)) % n
+        curve = EllipticCurveField(A,B,n)
 
-        l_curve = EllipticCurveField(A, B, n)
-
-        p = l_curve.lenstra_factor(15, (a,b), m)
-
-        if type(p) is int and p != 0:
-            return p
+        possible = curve.lenstra_factor(P,max_mult) 
+        if possible:
+            return possible
     
 def curve_tester():
     my_curve = EllipticCurve(-15,18)
@@ -223,4 +215,8 @@ if __name__ == '__main__':
     #ex_4()
     #curve_tester()
     #print( (((1512**3)+(14*1512)+19 ) - (3166**2)) % 6887 )
-    print( lenstra_factorization(6887,100)) # TODO: fix this 
+    print( lenstra_factorization(589,100,15))
+    print( lenstra_factorization(26167,100,15))
+    print( lenstra_factorization(1386493,100,15))
+    print( lenstra_factorization(28102844557,100,15))
+
