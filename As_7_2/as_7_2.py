@@ -37,16 +37,37 @@ def ee_multiplicative_inverse(p,a):
         mi = mi + p
     return mi
 
-def problem_7_1():
-    p = 541
-    q = 1223
-    v = 159853
-
+def rsa_signature_sign(p,q,v,D):
     N = p * q
 
     s = ee_multiplicative_inverse( (p-1)*(q-1), v )
-    print(s)
+
+    S = fast_power(N,D,s)
+
+    print(p*q,s,S)
+
+def rsa_verify(N, v, D, S):
+    print( fast_power(N,S,v) == D )
+
+def problem_7_1():
+    rsa_signature_sign(541, 1223, 159853,630579)
+
+def problem_7_2():
+    rsa_verify(1562501, 87953, 119812, 876453)
+    rsa_verify(1562501, 87953, 161153, 870099)
+    rsa_verify(1562501, 87953, 586036, 602754)
+
+def problem_7_3():
+    N = 27212325191
+    v = 22824469379
+
+    i = 3
+    while N % i != 0:
+        i += 2
+    
+    print(i, N / i)
+
+    # TODO: finish problem 7.3
 
 if __name__ == '__main__':
-    problem_7_1()
-    # TODO: verify this works at all lol
+    problem_7_3()
