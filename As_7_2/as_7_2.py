@@ -67,7 +67,15 @@ def problem_7_3():
     
     print(i, N / i)
 
-    # TODO: finish problem 7.3
+    s = ee_multiplicative_inverse( (i-1)*( (N/i) - 1 ), v )
+
+    D = 12910258780
+    S = fast_power(N, D, s)
+    print(S)
+
+    rsa_verify(N,v,D,S)
 
 if __name__ == '__main__':
+    problem_7_1()
+    problem_7_2()
     problem_7_3()
