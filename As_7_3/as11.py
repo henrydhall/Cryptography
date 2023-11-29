@@ -173,8 +173,8 @@ class EllipticCurveField:
                 return P
             
     def is_point(self,P):
-        pass
-        # TODO: implement this.
+        y_squared = self.Curve.y_squared(P[0]) % self.P
+        return (y_squared == P[1]**2 % self.P )
     
 def lenstra_factorization(n, max_curve, max_mult):
     '''

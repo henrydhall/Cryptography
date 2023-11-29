@@ -88,6 +88,7 @@ import as11
 # TODO: 7.12
 def ecdsa(p,a,b,G,q,s,d,e):
     my_curve = as11.EllipticCurveField(a,b,p)
+    print(my_curve.is_point(G))
     # Key Creation
     V = my_curve.double_and_add(G,s)
     print(V)
@@ -101,16 +102,48 @@ def ecdsa(p,a,b,G,q,s,d,e):
 def prob_7_12a():
     ecdsa(17389,231,473,(11259,11278),1321,542,644,847)
 
-def ecdsa_verify(p,a,b,G,q,s_1,s_2,d):
+def ecdsa_verify(a,b,G,p,q,s_1,s_2,d,v):
+    my_curve = as11.EllipticCurveField(a,b,p)
+    v_1 = d * ee_multiplicative_inverse(q, s_2) % q
+    v_2 = s_1 * ee_multiplicative_inverse(q,s_2) % q
+    v_3 = my_curve.double_and_add(G,v_1)
+    v_4 = my_curve.double_and_add(v,v_2)
+    v_f = my_curve.add_points( v_3, v_4 )
+    print(v_f[0] % q == s_1 % q)
     pass
 
 def prob_7_12b():
+    ecdsa_verify(231,473,(11259,11278),17389,1321,907,296,993,(11017,14637))
     pass
+
+def prob_7_7():
+    p = 348149
+    g = 113459
+    v = 185149
+
+    D = 153405
+    s_1 = 208913
+    s_2 = 209176
+    
+    D_p = 127561
+    s_2_p = 217800
+
+    e_1 = ((s_1 * (s_2_p - s_2) )) % (p - 1)
+    e_2 = ((s_2_p * D) - (s_2 * D_p)) % (p - 1)
+
+    e_2 = (ee_multiplicative_inverse(p-1,e_1) * e_2) % (p - 1)
+
+    denom = extended_euclidean(e_1,p-1)[0]
+
+    print(e_2/denom)
+    print(fast_power(p,g,e_2/denom),v)
 
 if __name__ == '__main__':
     pass
     #prob_7_4()
     #prob_7_5()
+    #prob_7_7()
     #prob_7_8()
     #prob_7_9()
     #prob_7_12a()
+    #prob_7_12b()
