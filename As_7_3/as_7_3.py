@@ -85,7 +85,6 @@ def prob_7_9():
 
 import as11
 
-# TODO: 7.12
 def ecdsa(p,a,b,G,q,s,d,e):
     my_curve = as11.EllipticCurveField(a,b,p)
     print(my_curve.is_point(G))
@@ -138,13 +137,30 @@ def prob_7_7():
     print(e_2/denom)
     print(fast_power(p,g,e_2/denom),v)
 
+def dsa_detailed(p,q,g,s,D,e):
+    v = fast_power(p,g,s)
+    print('v:', v)
+    S_1 = fast_power(p,g,e) % q
+    #print(D,s,S_1,ee_multiplicative_inverse(q,e),q)
+    S_2 = ((D + (s*S_1)) * ee_multiplicative_inverse(q,e)) % q
+    print( 'Signature: ', S_1,S_2)
+
+def dsa_verify_detailed(p,q,g,v,D,S_1,S_2):
+    V_1 = (D * ee_multiplicative_inverse(q,S_2)) % q
+    V_2 = S_1 * ee_multiplicative_inverse(q,S_2) % q
+    eq = int( ( (g**V_1) % p * (v**V_2) % p ) % q )
+    print('Verification calc, s_1', eq, S_1)
+    print(eq == S_1)
+
 if __name__ == '__main__':
     pass
     #prob_7_4()
     #prob_7_5()
     #prob_7_7()
-    prob_7_8()
-    dsa_verify(22531, 751, 4488, 4940, 224, 444, 124 )
+    #prob_7_8()
+    dsa_detailed(22531,751,4488,674,224,574)
+    dsa_verify_detailed(22531, 751, 4488, 4940, 224, 444, 124 )
+    dsa_verify_detailed(22531, 751, 4488, 4940, 224, 444, 54 )
     #prob_7_9()
     #prob_7_12a()
     #prob_7_12b()
